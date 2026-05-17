@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:trixie
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: update apt cache and install build dependencies
+        run: |
+          apt update
+          apt install devscripts equivs -y
+
+      - name: Build build dependencies
+        run: |
+          mk-build-deps --install --tool="apt-get -o Debug::pkgProblemResolver=yes -y"
+
+      - name: Build package
+        run: |
+          debuild -us -uc -b
+
+      - name: Move output
+        run: |
+          mkdir -p /output/
+          mv ../*.deb /output/
+          mv ./*.deb /output/
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "current"
+          prerelease: false
+          title: "Latest release"
+          files: |
+            /output/*
