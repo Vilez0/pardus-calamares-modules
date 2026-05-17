@@ -53,6 +53,7 @@ public:
 
 public slots:
     void retranslate();
+    void onAutoInstallClicked();
 
 protected:
     void focusInEvent( QFocusEvent* e ) override;  //choose the child widget to focus

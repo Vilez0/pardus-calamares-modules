@@ -34,7 +34,9 @@
 #include <QDesktopServices>
 #include <QFocusEvent>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QRadioButton>
 
 WelcomePage::WelcomePage( Config* config, QWidget* parent )
     : QWidget( parent )
@@ -100,6 +102,18 @@ WelcomePage::init()
     {
         setLanguageIcon( icon );
     }
+
+    //auto-install button
+    if (!m_conf->autoInstallEnabled())
+    {
+        ui->autoInstallButton->hide();
+        return;
+    }
+
+    auto size = 2 * QSize( Calamares::defaultFontHeight(), Calamares::defaultFontHeight() );
+    ui->autoInstallButton->setIcon( Calamares::defaultPixmap( Calamares::Release, Calamares::Original, size ) );
+    connect( ui->autoInstallButton, &QPushButton::clicked, this, &WelcomePage::onAutoInstallClicked );
+
 }
 
 void
@@ -224,4 +238,78 @@ LocaleTwoColumnDelegate::paint( QPainter* painter, const QStyleOptionViewItem& o
         option.palette,
         false,
         index.data( Calamares::Locale::TranslationsModel::EnglishLabelRole ).toString() );
+}
+
+void WelcomePage::onAutoInstallClicked()
+{
+    auto username = m_conf->autoInstallUsername();
+    auto password = m_conf->autoInstallPassword();
+    auto hostname = m_conf->autoInstallHostname();
+    auto fullname = m_conf->autoInstallFullname();
+
+    auto reply = QMessageBox::warning(
+        this,
+        tr("Automated Installation"),
+        tr("By clicking 'Yes', your disk will be formatted and your data will be erased.\n"
+           "Your username will be '%1' and your password will be '%2'.\n"
+           "Are you sure you want to proceed?")
+            .arg(username)
+            .arg(password),
+        QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::No)
+        return;
+
+    auto* vm = Calamares::ViewManager::instance();
+    if (!vm)
+        return;
+
+    int currentIndex = vm->currentStepIndex();
+    auto viewSteps = vm->viewSteps();
+
+    for (int i = currentIndex; i < viewSteps.size()-1; ++i)
+    {
+        // Fill in the user details, retrieve from config
+        if (QLatin1String(viewSteps[i]->metaObject()->className()) == "UsersViewStep")
+        {
+            QWidget* wg = viewSteps[i]->widget();
+            if (!wg) continue;
+
+            auto fill = [&](const QString& name, const QString& value) {
+                auto* le = wg->findChild<QLineEdit*>(name);
+                if (!le) return;
+                le->setText(value);
+                emit le->textEdited(value);
+                emit le->editingFinished();
+            };
+
+            fill("textBoxFullName",             fullname);
+            fill("textBoxLoginName",            username);
+            fill("textBoxHostname",             hostname);
+            fill("textBoxUserPassword",         password);
+            fill("textBoxUserVerifiedPassword", password);
+            fill("textBoxRootPassword",         password);
+            fill("textBoxVerifiedRootPassword", password);
+        } // Click on the Erase Disk button
+        else if (QLatin1String(viewSteps[i]->metaObject()->className()) == "PartitionViewStep")
+        {
+            QWidget* w = viewSteps[i]->widget();
+            if (!w) continue;
+
+            const QSize iconSize(Calamares::defaultIconSize().width()  * 2, Calamares::defaultIconSize().height() * 2);
+            const auto eraseKey = Calamares::defaultPixmap(Calamares::PartitionEraseAuto, Calamares::Original, iconSize).cacheKey();
+
+            for (QRadioButton* radio : w->findChildren<QRadioButton*>())
+                if (radio->icon().pixmap(iconSize).cacheKey() == eraseKey)
+                {
+                    radio->click();
+                    break;
+                }
+        }
+
+        // Skip pages until the Execution (Installation) page
+        if (QLatin1String(viewSteps[i+1]->metaObject()->className()) == "Calamares::ExecutionViewStep")
+            break;
+        vm->next();
+    }
 }

@@ -20,7 +20,7 @@ else()
     add_definitions(-DWITHOUT_LIBPARTED)
 endif()
 
-calamares_add_plugin(welcome
+calamares_add_plugin(welcome-automated
     TYPE viewmodule
     EXPORT_MACRO PLUGINDLLEXPORT_PRO
     SOURCES

@@ -255,6 +255,36 @@ Config::setSupportUrl( const QString& url )
     emit supportUrlChanged();
 }
 
+void
+Config::setAutoInstallEnabled( bool enabled )
+{
+    m_autoInstallEnabled = enabled;
+}
+
+void
+Config::setAutoInstallUsername( const QString& username )
+{
+    m_autoInstallUsername = username;
+}
+
+void
+Config::setAutoInstallFullname( const QString& fullname )
+{
+    m_autoInstallFullname = fullname;
+}
+
+void
+Config::setAutoInstallHostname( const QString& hostname )
+{
+    m_autoInstallHostname = hostname;
+}
+
+void
+Config::setAutoInstallPassword( const QString& password )
+{
+    m_autoInstallPassword = password;
+}
+
 QString
 Config::aboutMessage() const
 {
@@ -412,6 +442,26 @@ setGeoIP( Config* config, const QVariantMap& configurationMap )
     }
 }
 
+static inline void
+setAutoInstall( Config* config, const QVariantMap& configurationMap )
+{
+    bool ok = false;
+    QVariantMap autoInstall = Calamares::getSubMap( configurationMap, "autoInstall", ok );
+    if ( ok )
+    {
+        bool enabled = autoInstall.value( "enabled", false ).toBool();
+        config->setAutoInstallEnabled( enabled );
+        QString username = autoInstall.value( "username", "linux" ).toString();
+        config->setAutoInstallUsername( username );
+        QString password = autoInstall.value( "password", "linux" ).toString();
+        config->setAutoInstallPassword( password );
+        QString hostname = autoInstall.value( "hostname", username ).toString();
+        config->setAutoInstallHostname( hostname );
+        QString fullName = autoInstall.value( "fullname", username ).toString();
+        config->setAutoInstallFullname( fullName );
+    }
+}
+
 void
 Config::setConfigurationMap( const QVariantMap& configurationMap )
 {
@@ -424,6 +474,7 @@ Config::setConfigurationMap( const QVariantMap& configurationMap )
 
     ::setLanguageIcon( this, configurationMap );
     ::setGeoIP( this, configurationMap );
+    ::setAutoInstall(this, configurationMap);
 
     if ( configurationMap.contains( "requirements" )
          && Calamares::typeOf( configurationMap.value( "requirements" ) ) == Calamares::MapVariantType )

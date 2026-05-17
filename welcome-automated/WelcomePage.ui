@@ -186,6 +186,19 @@ SPDX-License-Identifier: GPL-3.0-or-later
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="autoInstallButton">
+           <property name="toolTip">
+            <string>Start Automated Installation</string>
+           </property>
+           <property name="text">
+            <string>&amp;Automated Installation</string>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>

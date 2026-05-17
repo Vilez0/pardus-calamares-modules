@@ -61,6 +61,12 @@ class Config : public QObject
     Q_PROPERTY( QString releaseNotesUrl MEMBER m_releaseNotesUrl NOTIFY releaseNotesUrlChanged FINAL )
     Q_PROPERTY( QString donateUrl MEMBER m_donateUrl NOTIFY donateUrlChanged FINAL )
 
+    Q_PROPERTY( bool autoInstallEnabled READ autoInstallEnabled CONSTANT FINAL )
+    Q_PROPERTY( QString autoInstallUsername READ autoInstallUsername CONSTANT FINAL )
+    Q_PROPERTY( QString autoInstallHostname READ autoInstallHostname CONSTANT FINAL )
+    Q_PROPERTY( QString autoInstallFullname READ autoInstallFullname CONSTANT FINAL )
+    Q_PROPERTY( QString autoInstallPassword READ autoInstallPassword CONSTANT FINAL )
+
     Q_PROPERTY( bool isNextEnabled MEMBER m_isNextEnabled NOTIFY isNextEnabledChanged FINAL )
 
 public:
@@ -89,6 +95,21 @@ public:
 
     QString donateUrl() const { return m_donateUrl; }
     void setDonateUrl( const QString& url );
+
+    bool autoInstallEnabled() const { return m_autoInstallEnabled; }
+    void setAutoInstallEnabled( bool enabled );
+
+    QString autoInstallUsername() const { return m_autoInstallUsername; }
+    void setAutoInstallUsername( const QString& username );
+
+    QString autoInstallHostname() const { return m_autoInstallHostname; }
+    void setAutoInstallHostname( const QString& hostname );
+
+    QString autoInstallFullname() const { return m_autoInstallFullname; }
+    void setAutoInstallFullname( const QString& fullname );
+
+    QString autoInstallPassword() const { return m_autoInstallPassword; }
+    void setAutoInstallPassword( const QString& password );
 
     QString aboutMessage() const;
     QString genericWelcomeMessage() const;
@@ -138,6 +159,12 @@ private:
     QString m_knownIssuesUrl;
     QString m_releaseNotesUrl;
     QString m_donateUrl;
+
+    bool m_autoInstallEnabled = false;
+    QString m_autoInstallUsername;
+    QString m_autoInstallHostname;
+    QString m_autoInstallFullname;
+    QString m_autoInstallPassword;
 };
 
 #endif

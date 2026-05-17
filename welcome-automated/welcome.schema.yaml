@@ -36,3 +36,14 @@ properties:
             url: { type: string }
             selector: { type: string }
         required: [ style, url, selector ]
+
+    autoInstall:
+        additionalProperties: false
+        type: object
+        properties:
+            enabled: { type: boolean, default: false }
+            username: { type: string }
+            hostname: { type: string }
+            fullname: { type: string }
+            password: { type: string }
+        required: [ enabled, username, password ]
