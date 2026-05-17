@@ -1,0 +1,19 @@
+Source: pardus-calamares-modules
+Section: misc
+Priority: optional
+Maintainer: Edip Hazuri <edip@medip.dev>
+Build-Depends: calamares,
+ cmake,
+ debhelper-compat (= 13),
+ libyaml-cpp-dev,
+ libkf6coreaddons-dev,
+ qt6-base-dev,
+ qt6-tools-dev,
+ qt6-svg-dev,
+ qt6-declarative-dev
+Standards-Version: 4.6.0
+
+Package: pardus-calamares-modules
+Architecture: all
+Depends: calamares, ${misc:Depends}
+Description: Custom Pardus modules for Calamares installer.
