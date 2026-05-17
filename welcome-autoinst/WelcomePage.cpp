@@ -37,6 +37,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QRadioButton>
+#include <QTranslator>
 
 WelcomePage::WelcomePage( Config* config, QWidget* parent )
     : QWidget( parent )
@@ -45,6 +46,13 @@ WelcomePage::WelcomePage( Config* config, QWidget* parent )
     , m_languages( nullptr )
     , m_conf( config )
 {
+    m_translator = new QTranslator( this );
+    m_translator->setObjectName( Calamares::translatorLocaleName().name );
+    if ( Calamares::loadTranslator( Calamares::translatorLocaleName(), "welcome-automated_", m_translator ) )
+    {
+        QCoreApplication::installTranslator( m_translator );
+    }
+
     using Branding = Calamares::Branding;
 
     const int defaultFontHeight = Calamares::defaultFontHeight();
@@ -219,6 +227,16 @@ WelcomePage::setLanguageIcon( QPixmap i )
 void
 WelcomePage::retranslate()
 {
+    if ( m_translator )
+    {
+        QString currentLocale = Calamares::translatorLocaleName().name;
+        if ( m_translator->objectName() != currentLocale )
+        {
+            m_translator->setObjectName( currentLocale );
+            Calamares::loadTranslator( Calamares::translatorLocaleName(), "welcome-automated_", m_translator );
+        }
+    }
+
     const QString message = m_conf->genericWelcomeMessage();
 
     ui->mainText->setText( message.arg( Calamares::Branding::instance()->versionedName() ) );

@@ -23,6 +23,7 @@ class WelcomePage;
 
 class CheckerContainer;
 class Config;
+class QTranslator;
 class WelcomePage : public QWidget
 {
     Q_OBJECT
@@ -67,6 +68,7 @@ private:
     Calamares::Locale::TranslationsModel* m_languages;
 
     Config* m_conf;
+    QTranslator* m_translator = nullptr;
 };
 
 /** @brief Delegate to display language information in two columns.

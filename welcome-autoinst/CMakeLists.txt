@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.16)
 project(WelcomeModuleAutoinst)
 find_package(Calamares REQUIRED)
 
-find_package(${qtname} ${QT_VERSION} CONFIG REQUIRED DBus Network)
+find_package(${qtname} ${QT_VERSION} CONFIG REQUIRED DBus Network LinguistTools)
 find_package(KF6CoreAddons REQUIRED)
 
 find_package(LIBPARTED)
@@ -19,6 +19,12 @@ else()
     set(PARTMAN_LIB)
     add_definitions(-DWITHOUT_LIBPARTED)
 endif()
+
+include(CalamaresAddTranslations)
+file(GLOB TRANSLATION_FILES lang/welcome-automated_*.ts)
+qt6_add_translation(QM_FILES ${TRANSLATION_FILES})
+
+add_custom_target(welcome-autoinst-translations ALL DEPENDS ${QM_FILES})
 
 calamares_add_plugin(welcome-autoinst
     TYPE viewmodule
@@ -43,3 +49,8 @@ calamares_add_plugin(welcome-autoinst
         ${qtname}::Network
     SHARED_LIB
 )
+
+add_dependencies(calamares_viewmodule_welcome-autoinst welcome-autoinst-translations)
+
+install(FILES ${QM_FILES}
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/calamares/lang)
