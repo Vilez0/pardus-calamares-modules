@@ -1,4 +1,4 @@
 cmake_minimum_required(VERSION 3.16)
 project(PardusCalamaresModules)
 
-add_subdirectory(welcome-automated)
+add_subdirectory(welcome-autoinst)

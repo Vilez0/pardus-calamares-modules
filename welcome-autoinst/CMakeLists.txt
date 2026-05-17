@@ -4,7 +4,7 @@
 #   SPDX-License-Identifier: BSD-2-Clause
 #
 cmake_minimum_required(VERSION 3.16)
-project(AutomatedWelcomeModule)
+project(WelcomeModuleAutoinst)
 find_package(Calamares REQUIRED)
 
 find_package(${qtname} ${QT_VERSION} CONFIG REQUIRED DBus Network)
@@ -20,7 +20,7 @@ else()
     add_definitions(-DWITHOUT_LIBPARTED)
 endif()
 
-calamares_add_plugin(welcome-automated
+calamares_add_plugin(welcome-autoinst
     TYPE viewmodule
     EXPORT_MACRO PLUGINDLLEXPORT_PRO
     SOURCES
