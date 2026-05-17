@@ -111,7 +111,7 @@ WelcomePage::init()
     }
 
     auto size = 2 * QSize( Calamares::defaultFontHeight(), Calamares::defaultFontHeight() );
-    ui->autoInstallButton->setIcon( Calamares::defaultPixmap( Calamares::Release, Calamares::Original, size ) );
+    ui->autoInstallButton->setIcon(QIcon::fromTheme("autocorrection-symbolic"));
     connect( ui->autoInstallButton, &QPushButton::clicked, this, &WelcomePage::onAutoInstallClicked );
 
 }
